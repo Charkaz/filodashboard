@@ -1,0 +1,24 @@
+{
+  "app": {
+    "title": "Panel Uygulaması",
+    "theme": {
+      "light": "Aydınlık Mod",
+      "dark": "Karanlık Mod"
+    }
+  },
+  "dashboard": {
+    "title": "Panel",
+    "value": "Değer",
+    "lastUpdated": "Son Güncelleme",
+    "loadData": "Veriyi yüklemek için butona basın",
+    "error": "Panel verisi yüklenemedi",
+    "refresh": "Yenile"
+  },
+  "language": {
+    "en": "İngilizce",
+    "tr": "Türkçe",
+    "ru": "Rusça",
+    "az": "Azerice",
+    "select": "Dil Seçin"
+  }
+} 

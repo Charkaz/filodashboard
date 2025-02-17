@@ -1,0 +1,24 @@
+{
+  "app": {
+    "title": "İdarəetmə Paneli",
+    "theme": {
+      "light": "İşıqlı Rejim",
+      "dark": "Qaranlıq Rejim"
+    }
+  },
+  "dashboard": {
+    "title": "Panel",
+    "value": "Dəyər",
+    "lastUpdated": "Son Yeniləmə",
+    "loadData": "Məlumatları yükləmək üçün düyməni basın",
+    "error": "Məlumatları yükləmək alınmadı",
+    "refresh": "Yenilə"
+  },
+  "language": {
+    "en": "İngiliscə",
+    "tr": "Türkcə",
+    "ru": "Rusca",
+    "az": "Azərbaycanca",
+    "select": "Dil Seçin"
+  }
+} 

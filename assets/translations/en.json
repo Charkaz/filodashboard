@@ -1,0 +1,24 @@
+{
+  "app": {
+    "title": "Dashboard App",
+    "theme": {
+      "light": "Light Mode",
+      "dark": "Dark Mode"
+    }
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "value": "Value",
+    "lastUpdated": "Last Updated",
+    "loadData": "Press the button to load data",
+    "error": "Failed to load dashboard data",
+    "refresh": "Refresh"
+  },
+  "language": {
+    "en": "English",
+    "tr": "Turkish",
+    "ru": "Russian",
+    "az": "Azerbaijani",
+    "select": "Select Language"
+  }
+} 
