@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../../core/mock/mock_remote_data_source.dart';
 import '../widgets/board_list.dart';
 import '../widgets/board_card.dart';
 
@@ -15,75 +17,78 @@ class BoardPage extends StatefulWidget {
 }
 
 class _BoardPageState extends State<BoardPage> {
-  // Her liste için kartları tutacak map
-  final Map<String, List<Map<String, dynamic>>> _lists = {
-    'reyonlar': [
-      {
-        'title': 'alişan siqaret vitrini 16:00',
-        'color': Colors.blue,
-        'user': 'AS',
-        'count': '0/145',
-      },
-      {
-        'title': 'Dunay dasgjd',
-        'color': Colors.green,
-        'user': 'DK',
-        'count': '23/98',
-      },
-      {
-        'title': 'Qasim kollasa vitrini 14:55',
-        'color': Colors.orange,
-        'user': 'QM',
-        'count': '45/76',
-      },
-      {
-        'title': 'Anar system',
-        'color': Colors.purple,
-        'user': 'AS',
-        'count': '12/89',
-      },
-      {
-        'title': 'Salaman kalbasa vitrin',
-        'color': Colors.red,
-        'user': 'SK',
-        'count': '67/120',
-      },
-      {
-        'title': 'Alisan diger',
-        'color': Colors.teal,
-        'user': 'AD',
-        'count': '34/167',
-      },
-      {
-        'title': 'ferid kassa etrafi',
-        'color': Colors.indigo,
-        'user': 'FK',
-        'count': '56/178',
-      },
-    ],
-    'baslandi': [
-      {
-        'title': 'Ziyad kassa',
-        'color': Colors.amber,
-        'user': 'ZK',
-        'count': '89/145',
-      },
-      {
-        'title': 'Islam saqqiz vitrini. 20:15',
-        'color': Colors.cyan,
-        'user': 'IS',
-        'count': '112/134',
-      },
-      {
-        'title': 'alisan siqaret salina dgdgahsdgahj',
-        'color': Colors.deepPurple,
-        'user': 'AS',
-        'count': '78/156',
-      },
-    ],
-    'sayilir': [],
-    'yoxlanilir': [],
-  };
+  late MockRemoteDataSource _mockDataSource;
+  Map<String, List<Map<String, dynamic>>> _lists = {};
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _mockDataSource = context.read<MockRemoteDataSource>();
+    _loadBoards();
+  }
+
+  Future<void> _loadBoards() async {
+    try {
+      final boards = await _mockDataSource.getBoards();
+      print('Loaded boards: $boards'); // Debug print
+
+      setState(() {
+        _lists = {
+          'reyonlar':
+              boards.where((board) => board['status'] == 'todo').map((board) {
+            final firstCard = (board['cards'] as List).firstOrNull;
+            print('Todo board: ${board['title']}'); // Debug print
+            return {
+              'title': board['title'],
+              'color': _getRandomColor(),
+              'user':
+                  firstCard?['assignee_id']?.substring(0, 2).toUpperCase() ??
+                      'NA',
+              'count': '${(board['cards'] as List).length}/100',
+            };
+          }).toList(),
+          'baslandi': boards
+              .where((board) => board['status'] == 'in_progress')
+              .map((board) {
+            final firstCard = (board['cards'] as List).firstOrNull;
+            print('In progress board: ${board['title']}'); // Debug print
+            return {
+              'title': board['title'],
+              'color': _getRandomColor(),
+              'user':
+                  firstCard?['assignee_id']?.substring(0, 2).toUpperCase() ??
+                      'NA',
+              'count': '${(board['cards'] as List).length}/100',
+            };
+          }).toList(),
+          'sayilir': [],
+          'yoxlanilir': [],
+        };
+        print('Final lists: $_lists'); // Debug print
+        _isLoading = false;
+      });
+    } catch (e) {
+      print('Error loading boards: $e'); // Debug print
+      setState(() => _isLoading = false);
+    }
+  }
+
+  Color _getRandomColor() {
+    final colors = [
+      Colors.blue,
+      Colors.green,
+      Colors.orange,
+      Colors.purple,
+      Colors.red,
+      Colors.teal,
+      Colors.indigo,
+      Colors.amber,
+      Colors.cyan,
+      Colors.deepPurple,
+    ];
+    return colors[DateTime.now().millisecond % colors.length];
+  }
 
   // Kartı bir listeden diğerine taşıma
   void _moveCard(String cardTitle, String fromList, String toList) {
@@ -99,6 +104,10 @@ class _BoardPageState extends State<BoardPage> {
 
   @override
   Widget build(BuildContext context) {
+    if (_isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Row(

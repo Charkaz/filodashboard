@@ -3,6 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'core/di/injection.dart';
 import 'core/language/language_bloc.dart';
+import 'core/mock/mock_api_client.dart';
+import 'core/mock/mock_remote_data_source.dart';
 import 'core/theme/theme_bloc.dart';
 import 'features/dashboard/domain/usecases/get_dashboard_data.dart';
 import 'features/dashboard/presentation/bloc/dashboard_bloc.dart';
@@ -12,6 +14,9 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await EasyLocalization.ensureInitialized();
   await configureDependencies();
+
+  final mockApiClient = MockApiClient();
+  final mockDataSource = MockRemoteDataSource(mockApiClient);
 
   runApp(
     EasyLocalization(
@@ -23,16 +28,21 @@ void main() async {
       ],
       path: 'assets/translations',
       fallbackLocale: const Locale('en'),
-      child: MultiBlocProvider(
+      child: MultiRepositoryProvider(
         providers: [
-          BlocProvider(
-            create: (context) => getIt<ThemeBloc>(),
-          ),
-          BlocProvider(
-            create: (context) => getIt<LanguageBloc>(),
-          ),
+          RepositoryProvider.value(value: mockDataSource),
         ],
-        child: const MyApp(),
+        child: MultiBlocProvider(
+          providers: [
+            BlocProvider(
+              create: (context) => getIt<ThemeBloc>(),
+            ),
+            BlocProvider(
+              create: (context) => getIt<LanguageBloc>(),
+            ),
+          ],
+          child: const MyApp(),
+        ),
       ),
     ),
   );
