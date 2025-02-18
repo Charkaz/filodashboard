@@ -74,6 +74,8 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i800.TestConfig(),
       registerFor: {_test},
     );
+    gh.lazySingleton<_i990.BoardRemoteDataSource>(
+        () => _i990.BoardRemoteDataSource(gh<_i361.Dio>(instanceName: 'dio')));
     gh.lazySingleton<_i597.ProjectRemoteDataSource>(() =>
         _i597.ProjectRemoteDataSource(gh<_i361.Dio>(instanceName: 'dio')));
     gh.factory<_i822.CreateBoard>(
@@ -110,8 +112,6 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i906.AuthRemoteDataSource(gh<_i361.Dio>()));
     gh.lazySingleton<_i529.AuthRepository>(
         () => _i912.AuthRepositoryImpl(gh<_i906.AuthRemoteDataSource>()));
-    gh.factory<_i990.BoardRemoteDataSource>(
-        () => _i990.BoardRemoteDataSourceImpl(gh<_i361.Dio>()));
     gh.factory<_i635.CreateProject>(
         () => _i635.CreateProject(gh<_i953.ProjectRepository>()));
     gh.factory<_i642.UpdateProject>(
