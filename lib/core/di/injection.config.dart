@@ -9,7 +9,9 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:dio/dio.dart' as _i361;
+import 'package:filodashboard/core/config/env_config.dart' as _i800;
 import 'package:filodashboard/core/language/language_bloc.dart' as _i875;
+import 'package:filodashboard/core/network/dio_client.dart' as _i903;
 import 'package:filodashboard/core/network/network_info.dart' as _i341;
 import 'package:filodashboard/core/theme/theme_bloc.dart' as _i585;
 import 'package:filodashboard/features/auth/data/datasources/auth_remote_data_source.dart'
@@ -52,6 +54,10 @@ import 'package:internet_connection_checker/internet_connection_checker.dart'
     as _i973;
 import 'package:shared_preferences/shared_preferences.dart' as _i460;
 
+const String _test = 'test';
+const String _dev = 'dev';
+const String _prod = 'prod';
+
 extension GetItInjectableX on _i174.GetIt {
 // initializes the registration of main-scope dependencies inside of GetIt
   _i174.GetIt init({
@@ -63,12 +69,13 @@ extension GetItInjectableX on _i174.GetIt {
       environment,
       environmentFilter,
     );
-    gh.factory<_i906.AuthRemoteDataSource>(
-        () => _i906.AuthRemoteDataSource(gh<_i361.Dio>()));
-    gh.factory<_i597.ProjectRemoteDataSource>(
-        () => _i597.ProjectRemoteDataSource(gh<_i361.Dio>()));
-    gh.lazySingleton<_i529.AuthRepository>(
-        () => _i912.AuthRepositoryImpl(gh<_i906.AuthRemoteDataSource>()));
+    final dioClient = _$DioClient();
+    gh.factory<_i800.EnvConfig>(
+      () => _i800.TestConfig(),
+      registerFor: {_test},
+    );
+    gh.lazySingleton<_i597.ProjectRemoteDataSource>(() =>
+        _i597.ProjectRemoteDataSource(gh<_i361.Dio>(instanceName: 'dio')));
     gh.factory<_i822.CreateBoard>(
         () => _i822.CreateBoard(gh<_i575.BoardRepository>()));
     gh.factory<_i8.DeleteBoard>(
@@ -80,10 +87,16 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i42.DashboardRepository>(() => _i85.DashboardRepositoryImpl());
     gh.factory<_i962.GetDashboardData>(
         () => _i962.GetDashboardData(gh<_i42.DashboardRepository>()));
-    gh.factory<_i990.BoardRemoteDataSource>(
-        () => _i990.BoardRemoteDataSourceImpl(gh<_i361.Dio>()));
+    gh.factory<_i800.EnvConfig>(
+      () => _i800.DevConfig(),
+      registerFor: {_dev},
+    );
     gh.factory<_i341.NetworkInfo>(
         () => _i341.NetworkInfoImpl(gh<_i973.InternetConnectionChecker>()));
+    gh.factory<_i800.EnvConfig>(
+      () => _i800.ProdConfig(),
+      registerFor: {_prod},
+    );
     gh.singleton<_i875.LanguageBloc>(
         () => _i875.LanguageBloc(preferences: gh<_i460.SharedPreferences>()));
     gh.singleton<_i585.ThemeBloc>(
@@ -92,6 +105,13 @@ extension GetItInjectableX on _i174.GetIt {
           gh<_i597.ProjectRemoteDataSource>(),
           gh<_i341.NetworkInfo>(),
         ));
+    gh.lazySingleton<_i361.Dio>(() => dioClient.dio(gh<_i800.EnvConfig>()));
+    gh.factory<_i906.AuthRemoteDataSource>(
+        () => _i906.AuthRemoteDataSource(gh<_i361.Dio>()));
+    gh.lazySingleton<_i529.AuthRepository>(
+        () => _i912.AuthRepositoryImpl(gh<_i906.AuthRemoteDataSource>()));
+    gh.factory<_i990.BoardRemoteDataSource>(
+        () => _i990.BoardRemoteDataSourceImpl(gh<_i361.Dio>()));
     gh.factory<_i635.CreateProject>(
         () => _i635.CreateProject(gh<_i953.ProjectRepository>()));
     gh.factory<_i642.UpdateProject>(
@@ -99,3 +119,5 @@ extension GetItInjectableX on _i174.GetIt {
     return this;
   }
 }
+
+class _$DioClient extends _i903.DioClient {}

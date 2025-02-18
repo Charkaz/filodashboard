@@ -6,10 +6,11 @@ import '../models/project_model.dart';
 part 'project_remote_data_source.g.dart';
 
 @RestApi()
-@injectable
+@lazySingleton
 abstract class ProjectRemoteDataSource {
   @factoryMethod
-  factory ProjectRemoteDataSource(Dio dio) = _ProjectRemoteDataSource;
+  factory ProjectRemoteDataSource(@Named('dio') Dio dio) =
+      _ProjectRemoteDataSource;
 
   @GET('/projects')
   Future<List<ProjectModel>> getProjects();
