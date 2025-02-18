@@ -4,8 +4,6 @@ import 'package:easy_localization/easy_localization.dart';
 import 'core/di/injection.dart';
 import 'core/language/language_bloc.dart';
 import 'core/theme/theme_bloc.dart';
-import 'core/widgets/language_selector.dart';
-import 'core/widgets/theme_toggle.dart';
 import 'features/dashboard/domain/usecases/get_dashboard_data.dart';
 import 'features/dashboard/presentation/bloc/dashboard_bloc.dart';
 import 'features/dashboard/presentation/pages/dashboard_page.dart';

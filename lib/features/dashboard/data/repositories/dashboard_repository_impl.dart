@@ -17,7 +17,7 @@ class DashboardRepositoryImpl implements DashboardRepository {
       );
       return Right(mockData);
     } catch (e) {
-      return const Left(ServerFailure());
+      return Left(ServerFailure());
     }
   }
 
@@ -27,7 +27,7 @@ class DashboardRepositoryImpl implements DashboardRepository {
       // TODO: Implement actual update logic
       return const Right(null);
     } catch (e) {
-      return const Left(ServerFailure());
+      return Left(ServerFailure());
     }
   }
 }
