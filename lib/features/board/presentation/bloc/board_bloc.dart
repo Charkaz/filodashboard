@@ -1,9 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
 import '../../../../core/mock/mock_remote_data_source.dart';
-import 'package:flutter/material.dart';
 
-// Events
 abstract class BoardEvent extends Equatable {
   @override
   List<Object?> get props => [];
@@ -37,41 +35,55 @@ class MoveBoard extends BoardEvent {
 // State
 class BoardState extends Equatable {
   final List<Map<String, dynamic>> boards;
+  final List<Map<String, dynamic>> columns;
   final bool isLoading;
   final String? error;
 
   const BoardState({
     this.boards = const [],
+    this.columns = const [],
     this.isLoading = true,
     this.error,
   });
 
   BoardState copyWith({
     List<Map<String, dynamic>>? boards,
+    List<Map<String, dynamic>>? columns,
     bool? isLoading,
     String? error,
   }) {
     return BoardState(
       boards: boards ?? this.boards,
+      columns: columns ?? this.columns,
       isLoading: isLoading ?? this.isLoading,
       error: error,
     );
   }
 
   Map<String, List<Map<String, dynamic>>> get groupedBoards {
-    return {
-      'reyonlar': boards.where((board) => board['status'] == 'todo').toList(),
-      'baslandi':
-          boards.where((board) => board['status'] == 'in_progress').toList(),
-      'sayilir':
-          boards.where((board) => board['status'] == 'counting').toList(),
-      'yoxlanilir':
-          boards.where((board) => board['status'] == 'review').toList(),
-    };
+    final Map<String, List<Map<String, dynamic>>> result = {};
+
+    // Initialize all columns with empty lists
+    for (final column in columns) {
+      result[column['title']] = [];
+    }
+
+    // Group boards by status
+    for (final board in boards) {
+      final status = board['status'];
+      final columnConfig = columns.firstWhere(
+        (col) => col['id'] == status,
+        orElse: () => columns.first,
+      );
+      final columnTitle = columnConfig['title'];
+      result[columnTitle]?.add(board);
+    }
+
+    return result;
   }
 
   @override
-  List<Object?> get props => [boards, isLoading, error];
+  List<Object?> get props => [boards, columns, isLoading, error];
 }
 
 // Bloc
@@ -86,8 +98,14 @@ class BoardBloc extends Bloc<BoardEvent, BoardState> {
 
   Future<void> _onLoadBoards(LoadBoards event, Emitter<BoardState> emit) async {
     try {
+      final config = await _mockDataSource.getBoardConfig();
       final boards = await _mockDataSource.getBoards();
-      emit(state.copyWith(boards: boards, isLoading: false));
+
+      emit(state.copyWith(
+        boards: boards,
+        columns: List<Map<String, dynamic>>.from(config['columns']),
+        isLoading: false,
+      ));
     } catch (e) {
       emit(state.copyWith(error: e.toString(), isLoading: false));
     }

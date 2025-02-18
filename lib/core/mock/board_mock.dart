@@ -77,4 +77,29 @@ class BoardMock {
       ],
     },
   ];
+
+  static final Map<String, dynamic> boardConfig = {
+    'columns': [
+      {
+        'id': 'todo',
+        'title': 'reyonlar',
+        'order': 1,
+      },
+      {
+        'id': 'in_progress',
+        'title': 'baslandi',
+        'order': 2,
+      },
+      {
+        'id': 'counting',
+        'title': 'sayilir',
+        'order': 3,
+      },
+      {
+        'id': 'review',
+        'title': 'yoxlanilir',
+        'order': 4,
+      },
+    ],
+  };
 }

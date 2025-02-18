@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../bloc/board_bloc.dart';
 import 'board_list.dart';
-import 'board_card.dart';
 import 'draggable_board_card.dart';
 
 class BoardListItem extends StatelessWidget {
@@ -15,19 +14,13 @@ class BoardListItem extends StatelessWidget {
     required this.cards,
   });
 
-  String _getStatusFromListTitle(String listTitle) {
-    switch (listTitle) {
-      case 'reyonlar':
-        return 'todo';
-      case 'baslandi':
-        return 'in_progress';
-      case 'sayilir':
-        return 'counting';
-      case 'yoxlanilir':
-        return 'review';
-      default:
-        return 'todo';
-    }
+  String _getStatusFromListTitle(BuildContext context, String listTitle) {
+    final columns = context.read<BoardBloc>().state.columns;
+    final column = columns.firstWhere(
+      (col) => col['title'] == listTitle,
+      orElse: () => columns.first,
+    );
+    return column['id'];
   }
 
   @override
@@ -40,7 +33,7 @@ class BoardListItem extends StatelessWidget {
         if (fromList != null && boardId != null && fromList != listTitle) {
           context.read<BoardBloc>().add(MoveBoard(
                 boardId: boardId,
-                newStatus: _getStatusFromListTitle(listTitle),
+                newStatus: _getStatusFromListTitle(context, listTitle),
               ));
         }
       },

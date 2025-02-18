@@ -18,6 +18,11 @@ class MockApiClient {
     return BoardMock.boards.firstWhere((board) => board['id'] == id);
   }
 
+  Future<Map<String, dynamic>> getBoardConfig() async {
+    await Future.delayed(_delay);
+    return BoardMock.boardConfig;
+  }
+
   Future<List<Map<String, dynamic>>> getProjects() async {
     await Future.delayed(_delay);
     return ProjectMock.projects;

@@ -23,6 +23,10 @@ class MockRemoteDataSource {
     return mockResponse(() => _apiClient.getBoardById(id));
   }
 
+  Future<Map<String, dynamic>> getBoardConfig() {
+    return mockResponse(() => _apiClient.getBoardConfig());
+  }
+
   Future<List<Map<String, dynamic>>> getProjects() {
     return mockResponse(() => _apiClient.getProjects());
   }

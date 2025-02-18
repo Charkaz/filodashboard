@@ -66,8 +66,8 @@ class MyApp extends StatelessWidget {
             create: (context) => DashboardBloc(
               getDashboardData: getIt<GetDashboardData>(),
             )..add(GetDashboardDataEvent()),
-            child: Scaffold(
-              body: const DashboardPage(),
+            child: const Scaffold(
+              body: DashboardPage(),
             ),
           ),
         );
